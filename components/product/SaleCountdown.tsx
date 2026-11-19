@@ -47,10 +47,13 @@ const pad = (n: number) => n.toString().padStart(2, "0");
 export function SaleCountdown({
   endsAt,
   variant = "inline",
+  blackFriday = false,
 }: {
   endsAt: string;
   /** "bar": full-width strip at the top of the page. "inline": the compact line that sits beside the delivery strip. */
   variant?: "bar" | "inline";
+  /** Black Friday skin: black strip, gold accents, sale-event copy instead of the usual offer line. */
+  blackFriday?: boolean;
 }) {
   const target = Date.parse(endsAt);
   const [left, setLeft] = useState<ReturnType<typeof remaining>>(null);
@@ -64,6 +67,79 @@ export function SaleCountdown({
   if (!left) return null;
 
   const clock = [left.hours, left.minutes, left.seconds];
+
+  if (blackFriday && variant === "bar") {
+    return (
+      <div className="bg-ink text-ivory" role="timer" aria-live="off">
+        <p className="container-page flex flex-wrap items-center justify-center gap-x-3 gap-y-1 py-2.5 font-ui text-body-sm font-medium">
+          <span className="rounded-sm bg-gold-500 px-2 py-0.5 text-[0.7rem] font-extrabold tracking-widest text-ink uppercase">
+            Black Friday
+          </span>
+          <span className="font-semibold">Sale ends in</span>
+          <span
+            className="flex items-center gap-1 font-numeral font-semibold tabular-nums"
+            aria-hidden="true"
+          >
+            {left.days > 0 && <span className="text-gold-500">{left.days}d</span>}
+            {clock.map((value, i) => (
+              <span key={i} className="flex items-center gap-1">
+                {i > 0 && <span className="text-gold-500">:</span>}
+                <span className="min-w-8 rounded-md bg-ivory/15 px-1.5 py-0.5 text-center text-gold-100">
+                  {pad(value)}
+                </span>
+              </span>
+            ))}
+          </span>
+          <span className="sr-only">
+            Black Friday sale ends in {left.days > 0 ? `${left.days} days ` : ""}
+            {left.hours} hours {left.minutes} minutes
+          </span>
+        </p>
+      </div>
+    );
+  }
+
+  if (blackFriday) {
+    return (
+      <div
+        className="w-full sm:flex sm:w-auto sm:self-stretch"
+        role="timer"
+        aria-live="off"
+      >
+        {/* Phones: one centered line. From sm up it sits beside the delivery
+            strip, so the label and the clock stack in two centered lines. */}
+        <p className="flex w-full items-center justify-center gap-2 rounded-lg bg-ink px-3 py-1.5 font-ui text-[0.78rem] font-semibold text-ivory sm:inline-flex sm:w-auto sm:flex-col sm:gap-1 sm:px-4 sm:py-1 sm:text-center sm:leading-none">
+          <span className="inline-flex items-center gap-2">
+            <Icon
+              name="clock"
+              className="size-4 shrink-0 text-gold-500 motion-safe:animate-[free-pop_1.2s_ease-in-out_infinite]"
+            />
+            <span className="whitespace-nowrap">
+              <span className="text-gold-500">Black Friday</span> deals end
+            </span>
+          </span>
+          <span
+            className="flex items-center gap-1 font-numeral text-[0.9rem] font-bold whitespace-nowrap tabular-nums"
+            aria-hidden="true"
+          >
+            {left.days > 0 && <span className="text-gold-500">{left.days}d</span>}
+            <span className="flex items-center gap-0.5">
+              {clock.map((value, i) => (
+                <span key={i} className="flex items-center gap-0.5">
+                  {i > 0 && <span className="text-gold-500">:</span>}
+                  <span className="min-w-5 text-center">{pad(value)}</span>
+                </span>
+              ))}
+            </span>
+          </span>
+        </p>
+        <span className="sr-only">
+          Black Friday deals end in {left.days > 0 ? `${left.days} days ` : ""}
+          {left.hours} hours {left.minutes} minutes
+        </span>
+      </div>
+    );
+  }
 
   if (variant === "bar") {
     /* A full-width strip at the very top of the product page, so the deadline

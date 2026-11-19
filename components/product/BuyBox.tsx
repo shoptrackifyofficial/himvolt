@@ -428,9 +428,14 @@ export function BuyBox({
         </div>
         )}
 
-        <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+        <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2">
           <FreeDeliveryUnlocked />
-          {product.saleEndsAt && <SaleCountdown endsAt={product.saleEndsAt} />}
+          {product.saleEndsAt && (
+            <SaleCountdown
+              endsAt={product.saleEndsAt}
+              blackFriday={product.handle === "hydraulic-arm-trainer"}
+            />
+          )}
         </div>
 
         <button

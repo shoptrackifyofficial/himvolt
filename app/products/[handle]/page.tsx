@@ -185,7 +185,11 @@ export default async function ProductPage({
 
       {/* Offer countdown: a real, merchant-set deadline (custom.sale_ends_at), shown first — as on the reference. */}
       {liveProduct.saleEndsAt && (
-        <SaleCountdown endsAt={liveProduct.saleEndsAt} variant="bar" />
+        <SaleCountdown
+          endsAt={liveProduct.saleEndsAt}
+          variant="bar"
+          blackFriday={liveProduct.handle === "hydraulic-arm-trainer"}
+        />
       )}
 
       <ProductPurchase
